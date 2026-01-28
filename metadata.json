@@ -1,0 +1,9 @@
+
+{
+  "name": "Zano - Finance Inbox & Document Autopilot",
+  "description": "A SaaS platform for small businesses and accountants that automatically captures, classifies, and organizes financial documents from Gmail into a structured Google Drive hierarchy using Gemini AI.",
+  "requestFramePermissions": [
+    "camera",
+    "microphone"
+  ]
+}
