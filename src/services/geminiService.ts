@@ -128,8 +128,9 @@ export class GeminiService {
                 amount: { type: Type.STRING },
                 currency: { type: Type.STRING },
                 reasoning: { type: Type.STRING },
+                confidence: { type: Type.NUMBER },
               },
-              required: ["type", "vendorName"],
+              required: ["type", "vendorName", "confidence"],
             },
           },
         });

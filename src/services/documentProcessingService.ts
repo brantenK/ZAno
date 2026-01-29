@@ -4,7 +4,7 @@ import { gmailService } from './gmailService';
 import { driveService } from './driveService';
 import { geminiService } from './geminiService';
 import { DocType } from '../types';
-import { loadSettings } from '../components/SettingsView';
+import { loadSettings } from './settingsService';
 
 export interface ProcessingProgress {
     stage: 'searching' | 'downloading' | 'classifying' | 'uploading' | 'complete' | 'error';
@@ -146,7 +146,8 @@ class DocumentProcessingService {
                         );
 
                         const docType = classification?.type || DocType.OTHER;
-                        const confidence = classification?.confidence ?? 100; // Default to 100 if not provided
+                        // If classification failed, use low confidence to flag for review
+                        const confidence = classification?.confidence ?? 50; // Use 50% for failed classifications
                         
                         // Check if document requires review based on confidence threshold
                         const settings = loadSettings();

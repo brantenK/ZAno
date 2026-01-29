@@ -1,45 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { ShieldCheck, RefreshCw, Trash2 } from 'lucide-react';
 import { processedEmailsService } from '../services/processedEmailsService';
+import { loadSettings, saveSettings, clearSettingsCache, AppSettings } from '../services/settingsService';
 
-// Settings persistence
-const SETTINGS_STORAGE_KEY = 'zano_settings';
-
-export interface AppSettings {
-    syncFrequency: 'realtime' | 'hourly' | 'daily';
-    aiConfidenceThreshold: number;
-}
-
-const defaultSettings: AppSettings = {
-    syncFrequency: 'realtime',
-    aiConfidenceThreshold: 85,
-};
-
-export const loadSettings = (): AppSettings => {
-    try {
-        const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
-        if (stored) {
-            return { ...defaultSettings, ...JSON.parse(stored) };
-        }
-    } catch (e) {
-        console.warn('Failed to load settings:', e);
-    }
-    return defaultSettings;
-};
-
-const saveSettings = (settings: AppSettings): void => {
-    try {
-        localStorage.setItem(SETTINGS_STORAGE_KEY, JSON.stringify(settings));
-    } catch (e) {
-        console.warn('Failed to save settings:', e);
-    }
-};
+// Re-export for backward compatibility
+export { loadSettings, type AppSettings } from '../services/settingsService';
 
 const SettingsView: React.FC = () => {
     const [settings, setSettings] = useState<AppSettings>(loadSettings);
 
     useEffect(() => {
         saveSettings(settings);
+        clearSettingsCache(); // Clear cache when settings change
     }, [settings]);
 
     const handleFrequencyChange = (e: React.ChangeEvent<HTMLSelectElement>) => {
