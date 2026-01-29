@@ -54,6 +54,9 @@ export default async function handler(request: Request) {
 
       Classify it into one of: INVOICE, BANK_STATEMENT, RECEIPT, TAX_LETTER, or OTHER.
       Also extract the Vendor/Sender Name, estimated Amount, and Currency if possible.
+      
+      Provide a confidence score (0-100) indicating how certain you are about this classification.
+      Higher scores mean higher confidence in the classification accuracy.
     `;
 
         const response = await ai.models.generateContent({
@@ -72,8 +75,9 @@ export default async function handler(request: Request) {
                         amount: { type: Type.STRING },
                         currency: { type: Type.STRING },
                         reasoning: { type: Type.STRING },
+                        confidence: { type: Type.NUMBER },
                     },
-                    required: ["type", "vendorName"],
+                    required: ["type", "vendorName", "confidence"],
                 },
             },
         });

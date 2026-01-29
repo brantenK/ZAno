@@ -4,7 +4,7 @@ import { gmailService, GmailAttachment } from '../services/gmailService';
 import { driveService } from '../services/driveService';
 import { geminiService } from '../services/geminiService';
 import { processedEmailsService } from '../services/processedEmailsService';
-
+import { loadSettings } from '../services/settingsService';
 
 import { SYNC_CONFIG } from '../config/constants';
 
@@ -159,6 +159,9 @@ export const useSyncStore = create<SyncState>((set, get) => ({
             );
 
             const failedEmailIds = new Set<string>();
+            
+            // Load settings once before processing loop to avoid repeated localStorage access
+            const settings = loadSettings();
 
             // Process in chunks to limit concurrency
             for (let i = 0; i < tasks.length; i += SYNC_CONFIG.BATCH_SIZE) {
@@ -182,6 +185,11 @@ export const useSyncStore = create<SyncState>((set, get) => ({
 
                         const docType = classification?.type || DocType.OTHER;
                         const vendorName = classification?.vendorName || email.senderName || 'Unknown';
+                        // If classification failed, use low confidence to flag for review
+                        const confidence = classification?.confidence ?? 50; // Use 50% for failed classifications
+                        
+                        // Check if document requires review based on confidence threshold
+                        const requiresReview = confidence < settings.aiConfidenceThreshold;
 
                         // 3. Upload (use email date)
                         const emailDate = new Date(email.date);
@@ -208,7 +216,9 @@ export const useSyncStore = create<SyncState>((set, get) => ({
                             drivePath: `${drivePath}/${attachment.filename}`,
                             amount: classification?.amount,
                             date: emailDate.toISOString(),
-                            emailId: email.id
+                            emailId: email.id,
+                            confidence: confidence,
+                            requiresReview: requiresReview
                         });
 
                         // Mark email as candidate for success

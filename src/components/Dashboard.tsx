@@ -7,7 +7,8 @@ import {
   FolderOpen,
   Zap,
   CheckCircle2,
-  Timer
+  Timer,
+  AlertTriangle
 } from 'lucide-react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
 import { DocumentRecord, DocType } from '../types';
@@ -58,6 +59,7 @@ const Dashboard: React.FC<DashboardProps> = ({ recentDocs: propsDocs, onSync, is
     totalDocs: recentDocs.length,
     invoices: recentDocs.filter(d => d.type === DocType.INVOICE).length,
     statements: recentDocs.filter(d => d.type === DocType.BANK_STATEMENT).length,
+    requiresReview: recentDocs.filter(d => d.requiresReview).length,
   }), [recentDocs]);
 
   return (
@@ -164,13 +166,32 @@ const Dashboard: React.FC<DashboardProps> = ({ recentDocs: propsDocs, onSync, is
                     <FileCheck className="w-4 h-4" />
                   </div>
                   <div className="flex-1 min-w-0">
-                    <p className="text-sm font-bold text-slate-900 truncate tracking-tight">{doc.sender}</p>
+                    <div className="flex items-center gap-2">
+                      <p className="text-sm font-bold text-slate-900 truncate tracking-tight">{doc.sender}</p>
+                      {doc.requiresReview && (
+                        <span 
+                          className="inline-flex items-center gap-1 px-2 py-0.5 rounded-md bg-amber-50 text-amber-700 border border-amber-200"
+                          title={`Low confidence (${doc.confidence ?? 'N/A'}%) - requires manual review`}
+                        >
+                          <AlertTriangle className="w-3 h-3" />
+                          <span className="text-[10px] font-bold">Review</span>
+                        </span>
+                      )}
+                    </div>
                     <div className="flex items-center gap-2 mt-0.5">
                       <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider">{doc.type.replace('_', ' ')}</span>
                       <span className="text-[10px] text-slate-300">•</span>
                       <span className="text-[10px] text-slate-400 font-medium">
                         {new Date(doc.processedAt).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' })}
                       </span>
+                      {doc.confidence !== undefined && !doc.requiresReview && (
+                        <>
+                          <span className="text-[10px] text-slate-300">•</span>
+                          <span className="text-[10px] text-emerald-600 font-medium" title="AI Confidence Score">
+                            {doc.confidence}%
+                          </span>
+                        </>
+                      )}
                     </div>
                   </div>
                   <button className="opacity-0 group-hover:opacity-100 p-2 text-slate-400 hover:text-cyan-600 hover:bg-cyan-50 rounded-lg transition-all" aria-label={`Open ${doc.sender} document in Drive`}>

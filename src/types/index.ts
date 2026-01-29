@@ -29,6 +29,8 @@ export interface DocumentRecord {
   amount?: string;
   currency?: string;
   emailId: string;
+  confidence?: number; // AI confidence score 0-100
+  requiresReview?: boolean; // Flag if confidence is below threshold
 }
 
 

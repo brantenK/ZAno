@@ -11,7 +11,9 @@ export const MOCK_DOCUMENTS: DocumentRecord[] = [
         amount: '1,250.00',
         currency: 'USD',
         date: new Date().toISOString(),
-        emailId: 'mock_email_1'
+        emailId: 'mock_email_1',
+        confidence: 95,
+        requiresReview: false
     },
     {
         id: 'mock_2',
@@ -22,7 +24,9 @@ export const MOCK_DOCUMENTS: DocumentRecord[] = [
         amount: '24.50',
         currency: 'USD',
         date: new Date().toISOString(),
-        emailId: 'mock_email_2'
+        emailId: 'mock_email_2',
+        confidence: 78,
+        requiresReview: true // Low confidence - requires review
     },
     {
         id: 'mock_3',
@@ -31,7 +35,9 @@ export const MOCK_DOCUMENTS: DocumentRecord[] = [
         processedAt: new Date(Date.now() - 1000 * 60 * 60 * 24).toISOString(), // 1 day ago
         drivePath: 'Zano/Chase Bank/December 2025',
         date: new Date(Date.now() - 86400000).toISOString(),
-        emailId: 'mock_email_3'
+        emailId: 'mock_email_3',
+        confidence: 92,
+        requiresReview: false
     },
     {
         id: 'mock_4',
@@ -42,7 +48,9 @@ export const MOCK_DOCUMENTS: DocumentRecord[] = [
         amount: '20.00',
         currency: 'USD',
         date: new Date(Date.now() - 172800000).toISOString(),
-        emailId: 'mock_email_4'
+        emailId: 'mock_email_4',
+        confidence: 88,
+        requiresReview: false
     },
     {
         id: 'mock_5',
@@ -51,7 +59,9 @@ export const MOCK_DOCUMENTS: DocumentRecord[] = [
         processedAt: new Date(Date.now() - 1000 * 60 * 60 * 24 * 3).toISOString(), // 3 days ago
         drivePath: 'Zano/IRS/January 2025',
         date: new Date(Date.now() - 259200000).toISOString(),
-        emailId: 'mock_email_5'
+        emailId: 'mock_email_5',
+        confidence: 72,
+        requiresReview: true // Low confidence - requires review
     }
 ];
 

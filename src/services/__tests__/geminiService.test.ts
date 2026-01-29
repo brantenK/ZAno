@@ -42,7 +42,8 @@ describe('GeminiService', () => {
                 ok: true,
                 json: async () => ({
                     type: DocType.INVOICE,
-                    vendorName: 'Test Vendor'
+                    vendorName: 'Test Vendor',
+                    confidence: 95
                 })
             });
 
@@ -50,7 +51,8 @@ describe('GeminiService', () => {
 
             expect(result).toEqual({
                 type: DocType.INVOICE,
-                vendorName: 'Test Vendor'
+                vendorName: 'Test Vendor',
+                confidence: 95
             });
             expect(fetchMock).toHaveBeenCalledWith('/api/classify', expect.any(Object));
         });
@@ -64,7 +66,8 @@ describe('GeminiService', () => {
             mockGenerateContent.mockResolvedValueOnce({
                 text: JSON.stringify({
                     type: DocType.RECEIPT,
-                    vendorName: 'Direct Vendor'
+                    vendorName: 'Direct Vendor',
+                    confidence: 88
                 })
             });
 
@@ -72,7 +75,8 @@ describe('GeminiService', () => {
 
             expect(result).toEqual({
                 type: DocType.RECEIPT,
-                vendorName: 'Direct Vendor'
+                vendorName: 'Direct Vendor',
+                confidence: 88
             });
             expect(mockGenerateContent).toHaveBeenCalled();
             vi.unstubAllEnvs();
@@ -89,6 +93,24 @@ describe('GeminiService', () => {
 
             const result = await geminiService.classifyEmailContent('Subject', 'Snippet');
             expect(result).toBeNull();
+        });
+
+        it('should return confidence score when provided by API', async () => {
+            (geminiService as any).useProxy = true;
+
+            fetchMock.mockResolvedValueOnce({
+                ok: true,
+                json: async () => ({
+                    type: DocType.INVOICE,
+                    vendorName: 'Test Vendor',
+                    confidence: 72
+                })
+            });
+
+            const result = await geminiService.classifyEmailContent('Invoice from Vendor', 'Payment details');
+
+            expect(result).toHaveProperty('confidence', 72);
+            expect(result?.confidence).toBeLessThan(85); // Below default threshold
         });
     });
 });
