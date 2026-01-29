@@ -3,9 +3,6 @@ import { ShieldCheck, RefreshCw, Trash2 } from 'lucide-react';
 import { processedEmailsService } from '../services/processedEmailsService';
 import { loadSettings, saveSettings, clearSettingsCache, AppSettings } from '../services/settingsService';
 
-// Re-export for backward compatibility
-export { loadSettings, type AppSettings } from '../services/settingsService';
-
 const SettingsView: React.FC = () => {
     const [settings, setSettings] = useState<AppSettings>(loadSettings);
 
