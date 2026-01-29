@@ -5,6 +5,7 @@ import { driveService } from './driveService';
 import { geminiService } from './geminiService';
 import { DocType } from '../types';
 import { loadSettings } from './settingsService';
+import { pLimit } from '../utils/concurrency';
 
 export interface ProcessingProgress {
     stage: 'searching' | 'downloading' | 'classifying' | 'uploading' | 'complete' | 'error';
@@ -115,17 +116,24 @@ class DocumentProcessingService {
 
             // Stage 2 & 3: Download attachments, classify, and upload
             let processed = 0;
+            const limit = pLimit(5); // Concurrency limit of 5 to balance speed and rate limits
 
+            // Collect all attachment tasks
+            const tasks: Array<{ email: any; attachment: any }> = [];
             for (const email of emailsWithAttachments) {
                 for (const attachment of email.attachments || []) {
-                    try {
-                        processed++;
+                    tasks.push({ email, attachment });
+                }
+            }
 
+            const processPromises = tasks.map(({ email, attachment }) => {
+                return limit(async () => {
+                    try {
                         // Download attachment
                         this.updateProgress({
                             stage: 'downloading',
                             message: `Downloading: ${attachment.filename}`,
-                            current: processed,
+                            current: processed + 1, // Look ahead for UI
                             total: totalAttachments
                         });
 
@@ -135,7 +143,7 @@ class DocumentProcessingService {
                         this.updateProgress({
                             stage: 'classifying',
                             message: `Classifying: ${attachment.filename}`,
-                            current: processed,
+                            current: processed + 1,
                             total: totalAttachments
                         });
 
@@ -148,7 +156,7 @@ class DocumentProcessingService {
                         const docType = classification?.type || DocType.OTHER;
                         // If classification failed, use low confidence to flag for review
                         const confidence = classification?.confidence ?? 50; // Use 50% for failed classifications
-                        
+
                         // Check if document requires review based on confidence threshold
                         const settings = loadSettings();
                         const requiresReview = confidence < settings.aiConfidenceThreshold;
@@ -167,7 +175,7 @@ class DocumentProcessingService {
                         this.updateProgress({
                             stage: 'uploading',
                             message: `Uploading: ${attachment.filename}`,
-                            current: processed,
+                            current: processed + 1,
                             total: totalAttachments
                         });
 
@@ -178,7 +186,9 @@ class DocumentProcessingService {
                             attachment.mimeType || 'application/pdf'
                         );
 
-                        results.push({
+                        processed++;
+
+                        return {
                             emailId: email.id,
                             attachmentName: attachment.filename,
                             docType,
@@ -189,17 +199,21 @@ class DocumentProcessingService {
                             processedAt: new Date().toISOString(),
                             confidence: confidence,
                             requiresReview: requiresReview
-                        });
+                        };
 
                     } catch (error: any) {
                         console.error(`Failed to process ${attachment.filename}:`, error);
-                        // Continue with next attachment
+                        processed++; // Still count as processed (failed)
+                        return null;
                     }
+                });
+            });
 
-                    // Rate limiting: small delay between API calls to avoid hitting limits
-                    await this.delay(200);
-                }
-            }
+            const processedResults = await Promise.all(processPromises);
+
+            // Filter out failures
+            const validResults = processedResults.filter((r): r is ProcessedDocument => r !== null);
+            results.push(...validResults);
 
             // Save email metadata
             const savedEmails: SavedEmail[] = emails.map(email => ({
