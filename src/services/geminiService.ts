@@ -10,6 +10,7 @@ export interface ClassificationResult {
   currency?: string;
   date?: string;
   reasoning?: string;
+  confidence?: number; // Confidence score 0-100
 }
 
 // Check if we're in production (Vercel) or development
@@ -104,6 +105,9 @@ export class GeminiService {
 
       Classify it into one of: INVOICE, BANK_STATEMENT, RECEIPT, TAX_LETTER, or OTHER.
       Also extract the Vendor/Sender Name, estimated Amount, and Currency if possible.
+      
+      Provide a confidence score (0-100) indicating how certain you are about this classification.
+      Higher scores mean higher confidence in the classification accuracy.
     `;
 
     const result = await withRetry(
@@ -177,6 +181,7 @@ export class GeminiService {
         - Currency: The currency code (e.g. USD, ZAR).
         - Date: The transaction date (YYYY-MM-DD).
         - Reasoning: Brief explanation of classification.
+        - Confidence: A score from 0-100 indicating certainty about the classification.
       `;
 
       const result = await withRetry(
@@ -206,8 +211,9 @@ export class GeminiService {
                   currency: { type: Type.STRING },
                   date: { type: Type.STRING },
                   reasoning: { type: Type.STRING },
+                  confidence: { type: Type.NUMBER },
                 },
-                required: ["type", "vendorName", "amount"],
+                required: ["type", "vendorName", "amount", "confidence"],
               },
             },
           });

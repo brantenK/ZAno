@@ -4,6 +4,7 @@ import { gmailService } from './gmailService';
 import { driveService } from './driveService';
 import { geminiService } from './geminiService';
 import { DocType } from '../types';
+import { loadSettings } from '../components/SettingsView';
 
 export interface ProcessingProgress {
     stage: 'searching' | 'downloading' | 'classifying' | 'uploading' | 'complete' | 'error';
@@ -24,6 +25,8 @@ export interface ProcessedDocument {
     amount?: string;
     currency?: string;
     processedAt: string;
+    confidence?: number;
+    requiresReview?: boolean;
 }
 
 class DocumentProcessingService {
@@ -143,6 +146,11 @@ class DocumentProcessingService {
                         );
 
                         const docType = classification?.type || DocType.OTHER;
+                        const confidence = classification?.confidence ?? 100; // Default to 100 if not provided
+                        
+                        // Check if document requires review based on confidence threshold
+                        const settings = loadSettings();
+                        const requiresReview = confidence < settings.aiConfidenceThreshold;
 
                         // Extract month from email date for folder organization
                         const emailDate = new Date(email.date);
@@ -177,7 +185,9 @@ class DocumentProcessingService {
                             driveFileId: driveFile.id,
                             amount: classification?.amount,
                             currency: classification?.currency,
-                            processedAt: new Date().toISOString()
+                            processedAt: new Date().toISOString(),
+                            confidence: confidence,
+                            requiresReview: requiresReview
                         });
 
                     } catch (error: any) {

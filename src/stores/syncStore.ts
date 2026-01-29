@@ -4,7 +4,7 @@ import { gmailService, GmailAttachment } from '../services/gmailService';
 import { driveService } from '../services/driveService';
 import { geminiService } from '../services/geminiService';
 import { processedEmailsService } from '../services/processedEmailsService';
-
+import { loadSettings } from '../components/SettingsView';
 
 import { SYNC_CONFIG } from '../config/constants';
 
@@ -182,6 +182,11 @@ export const useSyncStore = create<SyncState>((set, get) => ({
 
                         const docType = classification?.type || DocType.OTHER;
                         const vendorName = classification?.vendorName || email.senderName || 'Unknown';
+                        const confidence = classification?.confidence ?? 100; // Default to 100 if not provided
+                        
+                        // Check if document requires review based on confidence threshold
+                        const settings = loadSettings();
+                        const requiresReview = confidence < settings.aiConfidenceThreshold;
 
                         // 3. Upload (use email date)
                         const emailDate = new Date(email.date);
@@ -208,7 +213,9 @@ export const useSyncStore = create<SyncState>((set, get) => ({
                             drivePath: `${drivePath}/${attachment.filename}`,
                             amount: classification?.amount,
                             date: emailDate.toISOString(),
-                            emailId: email.id
+                            emailId: email.id,
+                            confidence: confidence,
+                            requiresReview: requiresReview
                         });
 
                         // Mark email as candidate for success

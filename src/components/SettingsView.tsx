@@ -15,7 +15,7 @@ const defaultSettings: AppSettings = {
     aiConfidenceThreshold: 85,
 };
 
-const loadSettings = (): AppSettings => {
+export const loadSettings = (): AppSettings => {
     try {
         const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
         if (stored) {
