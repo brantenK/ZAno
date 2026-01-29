@@ -159,18 +159,35 @@ class GmailService {
         const emails: Email[] = [];
 
         // Fetch all messages (up to maxResults) for comprehensive financial year coverage
-        for (const msg of listResponse.messages) {
-            try {
-                const fullMessage: GmailMessage = await this.fetchWithAuth(
-                    `${GMAIL_API_BASE}/messages/${msg.id}?format=full`
-                );
+        // Process messages with concurrency limit to avoid rate limiting while improving speed
+        const CONCURRENCY_LIMIT = 5;
 
-                const email = this.parseGmailMessage(fullMessage);
+        for (let i = 0; i < listResponse.messages.length; i += CONCURRENCY_LIMIT) {
+            const chunk = listResponse.messages.slice(i, i + CONCURRENCY_LIMIT);
+
+            const chunkResults = await Promise.all(chunk.map(async (msg) => {
+                try {
+                    const fullMessage: GmailMessage = await this.fetchWithAuth(
+                        `${GMAIL_API_BASE}/messages/${msg.id}?format=full`
+                    );
+
+                    return this.parseGmailMessage(fullMessage);
+                } catch (error) {
+                    console.error(`Failed to fetch message ${msg.id}:`, error);
+                    return null;
+                }
+            }));
+
+            // Filter out nulls and add to main array, preserving order
+            for (const email of chunkResults) {
                 if (email) {
                     emails.push(email);
                 }
-            } catch (error) {
-                console.error(`Failed to fetch message ${msg.id}:`, error);
+            }
+
+            // Small delay between chunks to be nice to the API
+            if (i + CONCURRENCY_LIMIT < listResponse.messages.length) {
+                await new Promise(resolve => setTimeout(resolve, 100));
             }
         }
 

@@ -56,7 +56,13 @@ describe('GmailService', () => {
                             { name: 'Subject', value: 'Test Subject' },
                             { name: 'Date', value: 'Sun, 01 Jan 2023 00:00:00 GMT' }
                         ],
-                        parts: []
+                        parts: [
+                            {
+                                filename: 'document.pdf',
+                                mimeType: 'application/pdf',
+                                body: { attachmentId: 'att1', size: 20000 }
+                            }
+                        ]
                     }
                 })
             });
