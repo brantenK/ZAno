@@ -60,7 +60,7 @@ describe('GmailService', () => {
                             {
                                 filename: 'test.pdf',
                                 mimeType: 'application/pdf',
-                                body: { attachmentId: 'att1', size: 1000 }
+                                body: { attachmentId: 'att1', size: 1024 }
                             }
                         ]
                     }

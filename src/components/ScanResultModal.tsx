@@ -29,6 +29,7 @@ const ScanResultModal: React.FC<ScanResultModalProps> = ({
 
     useEffect(() => {
         if (initialData) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setFormData({
                 vendorName: initialData.vendorName || '',
                 amount: initialData.amount || '',
