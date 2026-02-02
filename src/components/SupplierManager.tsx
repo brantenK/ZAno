@@ -42,18 +42,18 @@ const SupplierManager: React.FC<SupplierManagerProps> = ({ onFetchEmails, isFetc
         loadData();
     }, []);
 
-    const loadData = () => {
+    const loadData = async () => {
         if (isDemo) {
             setSuppliers(MOCK_SUPPLIERS);
             setSavedEmails([]);
         } else {
-            setSuppliers(supplierService.getSuppliers());
-            setSavedEmails(supplierService.getSavedEmails(financialYear));
+            setSuppliers(await supplierService.getSuppliersAsync());
+            setSavedEmails(await supplierService.getSavedEmailsAsync(financialYear));
         }
     };
 
-    const handleAddSupplier = (supplierData: Omit<Supplier, 'id' | 'createdAt' | 'isActive'>) => {
-        const newSupplier = supplierService.addSupplier(supplierData);
+    const handleAddSupplier = async (supplierData: Omit<Supplier, 'id' | 'createdAt' | 'isActive'>) => {
+        const newSupplier = await supplierService.addSupplierAsync(supplierData);
         loadData();
 
         // Open date picker for the new supplier
@@ -61,17 +61,17 @@ const SupplierManager: React.FC<SupplierManagerProps> = ({ onFetchEmails, isFetc
         setIsDateFilterOpen(true);
     };
 
-    const handleEditSupplier = (supplierData: Omit<Supplier, 'id' | 'createdAt' | 'isActive'>) => {
+    const handleEditSupplier = async (supplierData: Omit<Supplier, 'id' | 'createdAt' | 'isActive'>) => {
         if (editingSupplier) {
-            supplierService.updateSupplier(editingSupplier.id, supplierData);
+            await supplierService.updateSupplierAsync(editingSupplier.id, supplierData);
             loadData();
             setEditingSupplier(null);
         }
     };
 
-    const handleDeleteSupplier = (id: string) => {
+    const handleDeleteSupplier = async (id: string) => {
         if (confirm('Delete this supplier and all associated emails?')) {
-            supplierService.deleteSupplier(id);
+            await supplierService.deleteSupplierAsync(id);
             loadData();
         }
     };
