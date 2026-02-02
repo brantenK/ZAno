@@ -73,7 +73,10 @@ describe('DocumentProcessingService Benchmark', () => {
             id: 'sup-1',
             name: 'Test Vendor',
             aliases: [],
-            emailDomain: 'test.com'
+            emailDomain: 'test.com',
+            category: 'Test',
+            createdAt: new Date().toISOString(),
+            isActive: true
         };
 
         const dateRange = {

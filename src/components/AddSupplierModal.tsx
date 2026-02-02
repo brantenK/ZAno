@@ -22,6 +22,7 @@ const AddSupplierModal: React.FC<AddSupplierModalProps> = ({
     // Reset form when modal opens/closes or editSupplier changes
     useEffect(() => {
         if (isOpen) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setName(editSupplier?.name || '');
             setEmailDomain(editSupplier?.emailDomain || '');
             setError('');

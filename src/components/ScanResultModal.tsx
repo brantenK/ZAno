@@ -24,16 +24,17 @@ const ScanResultModal: React.FC<ScanResultModalProps> = ({
         vendorName: '',
         amount: '',
         date: '',
-        type: 'RECEIPT'
+        type: DocType.RECEIPT
     });
 
     useEffect(() => {
         if (initialData) {
+            // eslint-disable-next-line react-hooks/set-state-in-effect
             setFormData({
                 vendorName: initialData.vendorName || '',
                 amount: initialData.amount || '',
                 date: initialData.date || new Date().toISOString().split('T')[0],
-                type: initialData.type || 'RECEIPT'
+                type: initialData.type || DocType.RECEIPT
             });
         }
     }, [initialData]);
@@ -121,7 +122,7 @@ const ScanResultModal: React.FC<ScanResultModalProps> = ({
                 {/* Footer */}
                 <div className="p-4 border-t border-slate-100 bg-white">
                     <button
-                        onClick={() => onSave(formData)}
+                        onClick={() => onSave(formData as ScanData)}
                         disabled={isAnalyzing || !formData.vendorName}
                         className="w-full py-3 bg-indigo-600 text-white font-bold rounded-xl shadow-lg shadow-indigo-600/20 hover:bg-indigo-700 active:scale-95 transition-all disabled:opacity-50 disabled:cursor-not-allowed flex items-center justify-center gap-2"
                     >

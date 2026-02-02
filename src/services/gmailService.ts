@@ -125,7 +125,8 @@ class GmailService {
         }
 
         for (const chunk of chunks) {
-            await Promise.all(chunk.map(async (msg) => {
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            await Promise.all(chunk.map(async (msg: any) => {
                 try {
                     const fullMessage: GmailMessage = await this.fetchWithAuth(
                         `${GMAIL_API_BASE}/messages/${msg.id}?format=full`
@@ -211,7 +212,8 @@ class GmailService {
             }
 
             for (const chunk of chunks) {
-                await Promise.all(chunk.map(async (msg) => {
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                await Promise.all(chunk.map(async (msg: any) => {
                     try {
                         const fullMessage: GmailMessage = await this.fetchWithAuth(
                             `${GMAIL_API_BASE}/messages/${msg.id}?format=full`

@@ -289,7 +289,7 @@ const DiscoverSendersModal: React.FC<DiscoverSendersModalProps> = ({
                             </div>
                             <p className="text-sm text-red-600 font-medium">{error}</p>
                             <button
-                                onClick={fetchSenders}
+                                onClick={() => fetchSenders()}
                                 className="mt-4 text-sm text-indigo-600 font-medium hover:underline"
                             >
                                 Try Again

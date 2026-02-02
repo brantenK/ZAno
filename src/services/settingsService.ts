@@ -24,8 +24,10 @@ export const loadSettings = (): AppSettings => {
     try {
         const stored = localStorage.getItem(SETTINGS_STORAGE_KEY);
         if (stored) {
-            cachedSettings = { ...defaultSettings, ...JSON.parse(stored) };
-            return cachedSettings;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const parsed = JSON.parse(stored) as any;
+            cachedSettings = { ...defaultSettings, ...parsed };
+            return cachedSettings as AppSettings;
         }
     } catch (e) {
         console.warn('Failed to load settings:', e);

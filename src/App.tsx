@@ -98,6 +98,7 @@ const App: React.FC = () => {
 
       // IMPORTANT: Disable demo mode when user signs in with real account
       if (isDemo) {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         setIsDemo(false);
       }
 
@@ -111,6 +112,7 @@ const App: React.FC = () => {
   // Load emails from Gmail on first auth
   useEffect(() => {
     if (isAuthenticated && isInitialLoad && user?.accessToken) {
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setIsInitialLoad(false);
       loadEmailsFromGmail().then(count => {
         notify(`Loaded ${count} emails from Gmail`, 'success', 3000);

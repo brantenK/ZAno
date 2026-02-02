@@ -199,7 +199,7 @@ class DocumentProcessingService {
                             processedAt: new Date().toISOString(),
                             confidence: confidence,
                             requiresReview: requiresReview
-                        };
+                        } as ProcessedDocument;
 
                     } catch (error: any) {
                         console.error(`Failed to process ${attachment.filename}:`, error);

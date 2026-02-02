@@ -12,18 +12,14 @@ interface State {
     errorInfo: React.ErrorInfo | null;
 }
 
-// Use type assertion to work around React 19 class component type issue
-// eslint-disable-next-line @typescript-eslint/no-explicit-any
-const ReactComponent = React.Component as any;
-
-class ErrorBoundary extends ReactComponent {
+class ErrorBoundary extends React.Component<Props, State> {
     constructor(props: Props) {
         super(props);
         this.state = {
             hasError: false,
             error: null,
             errorInfo: null,
-        } as State;
+        };
     }
 
     static getDerivedStateFromError(error: Error): Partial<State> {
