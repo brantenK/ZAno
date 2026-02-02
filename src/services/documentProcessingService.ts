@@ -222,7 +222,7 @@ class DocumentProcessingService {
                 financialYear: getCurrentFinancialYear(),
                 savedAt: new Date().toISOString()
             }));
-            supplierService.saveEmails(savedEmails);
+            await supplierService.saveEmailsAsync(savedEmails);
 
             this.updateProgress({
                 stage: 'complete',

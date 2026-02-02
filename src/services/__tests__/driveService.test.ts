@@ -1,6 +1,13 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
 import { driveService } from '../driveService';
 
+// Mock firebase config to avoid env var errors
+vi.mock('../../config/firebase', () => ({
+    app: {},
+    auth: {},
+    googleProvider: {}
+}));
+
 vi.mock('../errorService', () => ({
     errorService: {
         handleError: vi.fn(),

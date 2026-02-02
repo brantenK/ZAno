@@ -119,15 +119,18 @@ class SupplierService {
     // ========== SYNC METHODS (Backwards Compatibility) ==========
     // These use localStorage as fallback for sync operations
 
+    /** @deprecated Use getSuppliersAsync instead */
     getSuppliers(): Supplier[] {
         const data = localStorage.getItem(SUPPLIERS_KEY);
         return data ? JSON.parse(data) : [];
     }
 
+    /** @deprecated Use saveSuppliersAsync instead */
     saveSuppliers(suppliers: Supplier[]): void {
         localStorage.setItem(SUPPLIERS_KEY, JSON.stringify(suppliers));
     }
 
+    /** @deprecated Use addSupplierAsync instead */
     addSupplier(supplier: Omit<Supplier, 'id' | 'createdAt' | 'isActive'>): Supplier {
         const suppliers = this.getSuppliers();
         const newSupplier: Supplier = {
@@ -145,6 +148,7 @@ class SupplierService {
         return newSupplier;
     }
 
+    /** @deprecated Use updateSupplierAsync instead */
     updateSupplier(id: string, updates: Partial<Supplier>): Supplier | null {
         const suppliers = this.getSuppliers();
         const index = suppliers.findIndex(s => s.id === id);
@@ -159,6 +163,7 @@ class SupplierService {
         return suppliers[index];
     }
 
+    /** @deprecated Use deleteSupplierAsync instead */
     deleteSupplier(id: string): boolean {
         const suppliers = this.getSuppliers();
         const filtered = suppliers.filter(s => s.id !== id);
@@ -176,10 +181,12 @@ class SupplierService {
         return true;
     }
 
+    /** @deprecated Use getSupplierByIdAsync instead */
     getSupplierById(id: string): Supplier | undefined {
         return this.getSuppliers().find(s => s.id === id);
     }
 
+    /** @deprecated Use getSavedEmailsAsync instead */
     getSavedEmails(financialYear?: string): SavedEmail[] {
         const data = localStorage.getItem(EMAILS_KEY);
         const emails: SavedEmail[] = data ? JSON.parse(data) : [];
@@ -190,10 +197,12 @@ class SupplierService {
         return emails;
     }
 
+    /** @deprecated Use getEmailsBySupplierAsync instead */
     getEmailsBySupplier(supplierId: string, financialYear?: string): SavedEmail[] {
         return this.getSavedEmails(financialYear).filter(e => e.supplierId === supplierId);
     }
 
+    /** @deprecated Use saveEmailsAsync instead. This method blocks the main thread. */
     saveEmails(emails: SavedEmail[]): void {
         const existing = this.getSavedEmails();
         const existingIds = new Set(existing.map(e => e.id));
@@ -210,12 +219,14 @@ class SupplierService {
         }
     }
 
+    /** @deprecated Use deleteEmailsBySupplierAsync instead */
     deleteEmailsBySupplier(supplierId: string): void {
         const emails = this.getSavedEmails();
         const filtered = emails.filter(e => e.supplierId !== supplierId);
         localStorage.setItem(EMAILS_KEY, JSON.stringify(filtered));
     }
 
+    /** @deprecated Use markEmailAsProcessedAsync instead */
     markEmailAsProcessed(emailId: string): void {
         const emails = this.getSavedEmails();
         const index = emails.findIndex(e => e.id === emailId);
