@@ -58,9 +58,9 @@ describe('GmailService', () => {
                         ],
                         parts: [
                             {
-                                filename: 'document.pdf',
+                                filename: 'test.pdf',
                                 mimeType: 'application/pdf',
-                                body: { attachmentId: 'att1', size: 20000 }
+                                body: { attachmentId: 'att1', size: 1000 }
                             }
                         ]
                     }

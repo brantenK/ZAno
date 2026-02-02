@@ -388,8 +388,9 @@ class GmailService {
         // Decode base64url encoded data
         const base64Data = response.data.replace(/-/g, '+').replace(/_/g, '/');
         const binaryString = atob(base64Data);
-        const bytes = new Uint8Array(binaryString.length);
-        for (let i = 0; i < binaryString.length; i++) {
+        const len = binaryString.length;
+        const bytes = new Uint8Array(len);
+        for (let i = 0; i < len; i++) {
             bytes[i] = binaryString.charCodeAt(i);
         }
 
