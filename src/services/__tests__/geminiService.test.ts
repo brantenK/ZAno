@@ -22,7 +22,7 @@ vi.mock('../errorService', () => ({
 }));
 
 vi.mock('../retryHelper', () => ({
-    withRetry: vi.fn((fn) => fn())
+    withRetry: vi.fn(async (fn) => await fn())
 }));
 
 describe('GeminiService', () => {
@@ -30,7 +30,7 @@ describe('GeminiService', () => {
     global.fetch = fetchMock;
 
     beforeEach(() => {
-        vi.resetAllMocks();
+        vi.clearAllMocks();
     });
 
     describe('classifyEmailContent', () => {

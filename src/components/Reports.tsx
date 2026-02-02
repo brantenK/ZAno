@@ -1,5 +1,5 @@
 
-import React from 'react';
+import React, { useState } from 'react';
 import {
   FileText,
   Calendar,
@@ -20,6 +20,8 @@ interface ReportsProps {
 
 const Reports: React.FC<ReportsProps> = ({ reports: propsReports, isDemo = false }) => {
   const reports = isDemo ? MOCK_REPORTS : propsReports;
+  const [processingId] = useState(() => Math.floor(Math.random() * 900000) + 100000);
+
   return (
     <div className="space-y-6 animate-in slide-in-from-right-2 duration-700">
       <div className="flex items-end justify-between">
@@ -154,7 +156,7 @@ const Reports: React.FC<ReportsProps> = ({ reports: propsReports, isDemo = false
                 </div>
               </div>
               <div className="p-10 pt-4 pb-8 text-center border-t border-slate-50">
-                <p className="text-[11px] text-slate-300 font-medium">Zano Processing ID: ZPR-{Math.floor(Math.random() * 900000) + 100000}</p>
+                <p className="text-[11px] text-slate-300 font-medium">Zano Processing ID: ZPR-{processingId}</p>
               </div>
             </div>
           ) : (

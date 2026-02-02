@@ -116,7 +116,7 @@ const AddSupplierModal: React.FC<AddSupplierModalProps> = ({
                             />
                         </div>
                         <p className="text-xs text-slate-400 mt-1">
-                            We'll search for all emails from @{emailDomain || 'domain.co.za'}
+                            We&apos;ll search for all emails from @{emailDomain || 'domain.co.za'}
                         </p>
                     </div>
 

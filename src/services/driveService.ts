@@ -13,6 +13,14 @@ export interface DriveFile {
     parents?: string[];
 }
 
+class ApiError extends Error {
+    status?: number;
+    constructor(message: string, status?: number) {
+        super(message);
+        this.status = status;
+    }
+}
+
 class DriveService {
     private accessToken: string | null = null;
     private folderCache: Map<string, string> = new Map();
@@ -51,15 +59,13 @@ class DriveService {
             // Handle auth errors specially
             if (response.status === 401) {
                 authService.handleAuthError();
-                const error = new Error('Authentication expired. Please sign in again.');
-                (error as any).status = 401;
+                const error = new ApiError('Authentication expired. Please sign in again.', 401);
                 throw error;
             }
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                const error = new Error(errorData.error?.message || `Drive API error: ${response.status}`);
-                (error as any).status = response.status;
+                const error = new ApiError(errorData.error?.message || `Drive API error: ${response.status}`, response.status);
                 throw error;
             }
 

@@ -25,7 +25,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ onBack }) => {
                         <section>
                             <h2 className="text-xl font-bold text-slate-800 mb-3">1. Acceptance of Terms</h2>
                             <p className="text-slate-600 leading-relaxed">
-                                By accessing or using Zano Finance ("the Service"), you agree to be bound by these Terms of Service. If you do not agree, please do not use the Service.
+                                By accessing or using Zano Finance (&quot;the Service&quot;), you agree to be bound by these Terms of Service. If you do not agree, please do not use the Service.
                             </p>
                         </section>
 
@@ -55,7 +55,7 @@ const TermsOfService: React.FC<TermsOfServiceProps> = ({ onBack }) => {
                         <section>
                             <h2 className="text-xl font-bold text-slate-800 mb-3">5. Disclaimer of Warranties</h2>
                             <p className="text-slate-600 leading-relaxed">
-                                The Service is provided "as is" without warranties of any kind. We do not guarantee that document classification will be 100% accurate. Users should verify important financial documents independently.
+                                The Service is provided &quot;as is&quot; without warranties of any kind. We do not guarantee that document classification will be 100% accurate. Users should verify important financial documents independently.
                             </p>
                         </section>
 

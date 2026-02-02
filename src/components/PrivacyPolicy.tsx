@@ -25,7 +25,7 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ onBack }) => {
                         <section>
                             <h2 className="text-xl font-bold text-slate-800 mb-3">1. Introduction</h2>
                             <p className="text-slate-600 leading-relaxed">
-                                Zano Finance ("we", "our", "us") is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our financial document automation service.
+                                Zano Finance (&quot;we&quot;, &quot;our&quot;, &quot;us&quot;) is committed to protecting your privacy. This Privacy Policy explains how we collect, use, and safeguard your information when you use our financial document automation service.
                             </p>
                         </section>
 
@@ -53,7 +53,7 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ onBack }) => {
                         <section>
                             <h2 className="text-xl font-bold text-slate-800 mb-3">4. Data Storage</h2>
                             <p className="text-slate-600 leading-relaxed">
-                                Zano operates on a <strong>local-first architecture</strong>. Your data remains in your Google account. We only store minimal session information (authentication tokens) temporarily in your browser's session storage.
+                                Zano operates on a <strong>local-first architecture</strong>. Your data remains in your Google account. We only store minimal session information (authentication tokens) temporarily in your browser&apos;s session storage.
                             </p>
                         </section>
 
@@ -69,7 +69,7 @@ const PrivacyPolicy: React.FC<PrivacyPolicyProps> = ({ onBack }) => {
                         <section>
                             <h2 className="text-xl font-bold text-slate-800 mb-3">6. Your Rights</h2>
                             <p className="text-slate-600 leading-relaxed">
-                                You can revoke Zano's access to your Google account at any time via your{' '}
+                                You can revoke Zano&apos;s access to your Google account at any time via your{' '}
                                 <a href="https://myaccount.google.com/permissions" target="_blank" rel="noopener noreferrer" className="text-cyan-600 hover:underline">
                                     Google Account Permissions
                                 </a>.

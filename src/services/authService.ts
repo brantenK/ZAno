@@ -4,7 +4,8 @@ import {
     signOut as firebaseSignOut,
     onAuthStateChanged,
     User,
-    UserCredential
+    UserCredential,
+    AuthError
 } from 'firebase/auth';
 import { auth, googleProvider } from '../config/firebase';
 import { errorService, ErrorType } from './errorService';
@@ -18,6 +19,11 @@ export interface AuthUser {
     displayName: string | null;
     photoURL: string | null;
     accessToken: string | null;
+}
+
+interface TokenResponse {
+    oauthAccessToken?: string;
+    expiresIn?: number;
 }
 
 type AuthExpiredCallback = () => void;
@@ -80,7 +86,8 @@ class AuthService {
 
 
             // Get the OAuth access token for Google APIs
-            const oauthCredential = (result as any)._tokenResponse;
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const oauthCredential = (result as any)._tokenResponse as TokenResponse | undefined;
 
 
             this.accessToken = oauthCredential?.oauthAccessToken || null;
@@ -88,7 +95,7 @@ class AuthService {
 
             // Token typically expires in 1 hour (3600 seconds)
             // We'll set expiry 5 minutes early to be safe
-            const expiresIn = oauthCredential?.expiresIn || 3600;
+            const expiresIn = Number(oauthCredential?.expiresIn) || 3600;
             this.tokenExpiryTime = Date.now() + (expiresIn - 300) * 1000;
 
             // Persist token for hot reload recovery
@@ -98,11 +105,12 @@ class AuthService {
             }
 
             return this.formatUser(result.user);
-        } catch (error: any) {
+        } catch (error) {
             console.error('[Auth Debug] signInWithGoogle error:', error);
+            const authError = error as AuthError;
             // User closed popup or other error
-            if (error.code !== 'auth/popup-closed-by-user') {
-                errorService.handleError(error, 'authentication');
+            if (authError.code !== 'auth/popup-closed-by-user') {
+                errorService.handleError(authError, 'authentication');
             }
             throw error;
         }
@@ -118,7 +126,8 @@ class AuthService {
 
 
                 // Get the OAuth access token for Google APIs
-                const oauthCredential = (result as any)._tokenResponse;
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                const oauthCredential = (result as any)._tokenResponse as TokenResponse | undefined;
 
 
 
@@ -126,7 +135,7 @@ class AuthService {
 
                 // Token typically expires in 1 hour (3600 seconds)
                 // We'll set expiry 5 minutes early to be safe
-                const expiresIn = oauthCredential?.expiresIn || 3600;
+                const expiresIn = Number(oauthCredential?.expiresIn) || 3600;
                 this.tokenExpiryTime = Date.now() + (expiresIn - 300) * 1000;
 
                 // Persist token for hot reload recovery
@@ -141,9 +150,9 @@ class AuthService {
             }
 
             return null;
-        } catch (error: any) {
+        } catch (error) {
             console.error('[Auth Debug] checkRedirectResult error:', error);
-            errorService.handleError(error, 'authentication');
+            errorService.handleError(error as Error, 'authentication');
             throw error;
         }
     }

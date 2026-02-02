@@ -68,7 +68,7 @@ class ErrorBoundary extends ReactComponent {
                         </h1>
 
                         <p className="text-slate-500 mb-6">
-                            We encountered an unexpected error. Don't worry, your data is safe.
+                            We encountered an unexpected error. Don&apos;t worry, your data is safe.
                         </p>
 
                         {import.meta.env.DEV && state.error && (

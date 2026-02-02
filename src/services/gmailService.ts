@@ -16,6 +16,14 @@ export interface EmailWithAttachments extends Email {
     attachments?: GmailAttachment[];
 }
 
+interface GmailPart {
+    mimeType: string;
+    filename: string;
+    body: { attachmentId?: string; data?: string; size?: number };
+    parts?: GmailPart[];
+    headers?: Array<{ name: string; value: string }>;
+}
+
 export interface GmailMessage {
     id: string;
     threadId: string;
@@ -24,18 +32,17 @@ export interface GmailMessage {
         headers: Array<{ name: string; value: string }>;
         mimeType?: string;
         body?: { attachmentId?: string; data?: string; size?: number };
-        parts?: Array<{
-            mimeType: string;
-            filename: string;
-            body: { attachmentId?: string; data?: string; size?: number };
-            parts?: Array<{
-                mimeType: string;
-                filename: string;
-                body: { attachmentId?: string; data?: string; size?: number };
-            }>;
-        }>;
+        parts?: GmailPart[];
     };
     internalDate: string;
+}
+
+class ApiError extends Error {
+    status?: number;
+    constructor(message: string, status?: number) {
+        super(message);
+        this.status = status;
+    }
 }
 
 class GmailService {
@@ -64,15 +71,13 @@ class GmailService {
             // Handle auth errors specially
             if (response.status === 401) {
                 authService.handleAuthError();
-                const error = new Error('Authentication expired. Please sign in again.');
-                (error as any).status = 401;
+                const error = new ApiError('Authentication expired. Please sign in again.', 401);
                 throw error;
             }
 
             if (!response.ok) {
                 const errorData = await response.json().catch(() => ({}));
-                const error = new Error(errorData.error?.message || `Gmail API error: ${response.status}`);
-                (error as any).status = response.status;
+                const error = new ApiError(errorData.error?.message || `Gmail API error: ${response.status}`, response.status);
                 throw error;
             }
 
@@ -268,7 +273,7 @@ class GmailService {
         };
     }
 
-    private extractAttachments(parts: any[], attachments: GmailAttachment[]) {
+    private extractAttachments(parts: GmailPart[], attachments: GmailAttachment[]) {
         // File extensions that are likely actual documents (not logos/signatures)
         const DOCUMENT_EXTENSIONS = [
             '.pdf', '.doc', '.docx', '.xls', '.xlsx', '.csv',
@@ -290,7 +295,7 @@ class GmailService {
 
                 // Check if it's inline (Content-Disposition: inline) - these are usually logos
                 const contentDisposition = part.headers?.find(
-                    (h: any) => h.name.toLowerCase() === 'content-disposition'
+                    (h) => h.name.toLowerCase() === 'content-disposition'
                 )?.value || '';
                 const isInline = contentDisposition.toLowerCase().includes('inline');
 

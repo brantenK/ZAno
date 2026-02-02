@@ -1,4 +1,12 @@
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+
+// Mock Firebase config before importing driveService
+vi.mock('../../config/firebase', () => ({
+    auth: { currentUser: null },
+    googleProvider: {},
+    app: {},
+}));
+
 import { driveService } from '../driveService';
 
 vi.mock('../errorService', () => ({
